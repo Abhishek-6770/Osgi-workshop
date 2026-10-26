@@ -6,6 +6,7 @@ import com.northwind.oms.core.model.Money;
 import com.northwind.oms.security.spi.Principal;
 
 /**
+ * dummy line
  * Authorizes charges against a customer's account. This demo implementation
  * approves any positive amount for a caller that holds the {@code BILLING} role.
  */

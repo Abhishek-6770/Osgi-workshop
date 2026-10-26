@@ -1,6 +1,7 @@
 package com.northwind.oms.core.model;
 
 /**
+ * dummy line
  * Immutable monetary amount stored in minor units (e.g. cents) to avoid
  * floating point rounding problems in price calculations.
  */
