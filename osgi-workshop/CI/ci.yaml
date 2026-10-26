@@ -1,0 +1,60 @@
+name: CI
+
+on:
+  push:
+    branches: ["**"]
+  pull_request:
+    branches: ["**"]
+  workflow_dispatch:
+    inputs:
+      scenario:
+        description: Choose full build or changed modules only
+        type: choice
+        options: [changed, full]
+        default: changed
+        required: true
+      publish_to_jfrog:
+        description: Publish OSGi packages to JFrog (requires configured secret/variables)
+        type: boolean
+        default: false
+        required: true
+      container_image:
+        description: Optional image reference for Trivy scanning
+        type: string
+        default: ""
+        required: false
+
+permissions:
+  contents: read
+  pull-requests: read
+  security-events: write
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  osgi-build:
+    name: Reusable OSGi PDE build
+    uses: Abhishek-6770/osgi-ci-platform/.github/workflows/reusable-osgi-build.yml@main
+    with:
+      scenario: ${{ github.event_name == 'workflow_dispatch' && inputs.scenario || 'changed' }}
+      publish_to_jfrog: ${{ github.event_name == 'workflow_dispatch' && inputs.publish_to_jfrog || false }}
+      runner: '["ubuntu-latest"]'
+    secrets:
+      JF_ACCESS_TOKEN: ${{ secrets.JF_ACCESS_TOKEN }}
+    permissions:
+      contents: read
+      security-events: write
+
+  security:
+    name: Reusable shift-left security checks
+    uses: Abhishek-6770/osgi-ci-platform/.github/workflows/reusable-security.yml@main
+    with:
+      container_image: ${{ github.event_name == 'workflow_dispatch' && inputs.container_image || '' }}
+      runner: '["ubuntu-latest"]'
+    secrets:
+      GITLEAKS_LICENSE: ${{ secrets.GITLEAKS_LICENSE }}
+    permissions:
+      contents: read
+      pull-requests: read
