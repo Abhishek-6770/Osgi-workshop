@@ -1,1 +1,0 @@
-# Osgi-workshop
