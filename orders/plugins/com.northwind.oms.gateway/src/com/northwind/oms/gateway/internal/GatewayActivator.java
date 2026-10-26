@@ -4,6 +4,7 @@ import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 
 /**
+ * dummy line
  * Controls the gateway bundle life cycle. Registered via the
  * {@code Bundle-Activator} header in {@code META-INF/MANIFEST.MF}.
  */
